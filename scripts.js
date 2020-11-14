@@ -16,9 +16,33 @@ const Player = (symbol) => { //player has a symbol X or O
 
 var boardModule = (function() { //Module holding the board and methods around board population and move legality logic
 
-    var boardArray = [[0,0,0],
-                      [0,0,0],
-                      [0,0,0]];
+    var boardArray = [['','',''],
+                      ['','',''],
+                      ['','','']];
+
+    const gameGrid = document.querySelector(".game-grid"); //selects the game grid container
+    
+    const printBoardOnscreen = function(){ //adds the board to the DOM
+
+        currentBoardState = boardModule.getBoard();
+
+        var square;
+
+        for(let i=0;i<currentBoardState.length;i++){//creates a square and fills it with content from the current board state
+            
+            for(let j=0;j<currentBoardState[0].length;j++){
+                console.log("inside inner most for loop");
+                square = document.createElement("div");
+                square.classList.add("square");
+                square.id = `${i},${j}`;
+                square.textContent = currentBoardState[i][j];
+                gameGrid.appendChild(square);
+
+            }
+        }
+
+
+    }
     
 
     const resetBoard =  function() { //resets the board to empty strings
@@ -42,7 +66,6 @@ var boardModule = (function() { //Module holding the board and methods around bo
         return boardArray;
 
     }
-
 
     const addToBoard = function(coordinates,symbol){ //adds symbol to board at specified coordinates
 
@@ -69,63 +92,69 @@ var boardModule = (function() { //Module holding the board and methods around bo
 
     }
 
-    return{addToBoard,getBoard,resetBoard};
-
-
+    return{addToBoard,getBoard,resetBoard,printBoardOnscreen};
 
 }());
+
+
 
 var gameModule = (function() { //should control the flow of game and reflect that in the DOM
 
-    let playerOne = Player('X');
-    let playerTwo = Player('O');
+    let _playerOne = Player('X');
+    let _playerTwo = Player('O');
+    let _currentPlayer;//default start
 
     let currentBoardState;
-    const gameGrid = document.querySelector(".game-grid"); //selects the game grid container
+    
+    const _changePlayer = function() {
 
-    const printBoardOnscreen = function(){ //adds the board to the DOM
-
-        currentBoardState = boardModule.getBoard();
-
-        var square;
-
-        for(let i=0;i<currentBoardState.length;i++){//creates a square and fills it with content from the current board state
-            
-            for(let j=0;j<currentBoardState[0].length;j++){
-                console.log("inside inner most for loop");
-                square = document.createElement("div");
-                square.classList.add("square");
-                square.id = `${i},${j}`;
-                square.textContent = currentBoardState[i][j];
-                gameGrid.appendChild(square);
-
-            }
+        if(_currentPlayer == _playerOne){
+            _currentPlayer = _playerTwo;
+        }else if(_currentPlayer == _playerTwo){
+            _currentPlayer = _playerOne;
         }
 
+    }
+
+    const startGame = function(){
+
+        currentPlayer = _playerOne;
+        boardModule.printBoardOnscreen();
 
     }
 
-    const reset = function(){//resets the board and starts play
-
-        console.log("not yet implemented")
-
-
-    }
-
-    const play = function(){
+    const playTurn = function(event){//retrieve coordinates from event and add that to board then change current player
         
-        printBoardOnscreen();
-        console.log("not yet implemented")
+        var coordinates = event.target.id;
+
+        coordinates = coordinates.split(",");
+
+        console.log(coordinates);
+        
+
+        boardModule.addToBoard(parseInt(coordinates[0],parseInt(coordinates[1])));
+        _changePlayer();
 
     }
 
-
-    return{play};
-
-
+    //NOT SURE WHAT BEST PRACTICE IS, just adding the event listener inside the grid module
+   
+    return{playTurn,startGame};
 
 }());
 
+gameModule.startGame();
+
+let squares = document.querySelectorAll(".square"); 
+    console.log("these are the squares,", squares);
+    squares.forEach(element => {
+
+        console.log(element);
+        element.addEventListener("click", function(e){
+            gameModule.playTurn(e);
+
+        });
+
+    });
 
 
-gameModule.play();

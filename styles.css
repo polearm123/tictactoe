@@ -1,19 +1,31 @@
-body html{
-
+html{
     height:100%;
-    width:100%;
-
-
 }
+
+
+
+body{
+    height:100%;
+    display:flex;
+    width:100%;
+    justify-content: center;
+    align-items: center;
+    
+}
+
 
 .square{
 
+    display:flex;
     height:50px;
     width:50px;
-    color: black;
+    color: white;
     background-color: black;
     padding:5px;
     margin: 5px 5px;
+    align-items: center;
+    justify-content: center;
+    
 
 
 }
@@ -24,7 +36,7 @@ body html{
     display:flex;
     flex-wrap:wrap;
     background-color: tan;
-    /* padding: 0 0 10px 10px; */
+    padding: 0 0 10px 10px; */
     align-items: center;
     justify-content: center;
     width: 250px;
