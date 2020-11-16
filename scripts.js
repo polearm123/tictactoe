@@ -1,6 +1,6 @@
 const Player = (symbol) => { //player has a symbol X or O
 
-    const getSymbol = function(){
+    const getSymbol = () => {
 
         return symbol;
 
@@ -10,6 +10,23 @@ const Player = (symbol) => { //player has a symbol X or O
 
 }
 
+const Computer = (symbol) => { //makes moves according to minMax
+
+    getSymbol = () => {
+
+        return symbol;
+
+    }
+
+    const makeMove = () => {
+
+        console.log("not yet implemented");
+
+    }
+
+    return {makeMove};
+
+}
 
 
 var boardModule = (function() { //Module holding the board and methods around board population and move legality logic
@@ -50,10 +67,8 @@ var boardModule = (function() { //Module holding the board and methods around bo
 
         });
 
-
     }
     
-
     const resetBoard =  function() { //resets the board to empty strings
 
         for(let i=0;i<boardArray.length;i++){
@@ -77,7 +92,6 @@ var boardModule = (function() { //Module holding the board and methods around bo
 
     const addToBoard = function(coordinates,symbol){ //adds symbol to board at specified coordinates
 
-
         if(checkLegalMove(coordinates)){
 
             boardArray[coordinates[0]][coordinates[1]] = symbol;
@@ -88,9 +102,6 @@ var boardModule = (function() { //Module holding the board and methods around bo
             return false;
 
         } //if return 0 current player should not be changed
-
-       
-
 
     } 
 
@@ -160,7 +171,6 @@ var boardModule = (function() { //Module holding the board and methods around bo
 
     const getDiagonal = (arr,diagNumber) => {//lazy way to retrieve diagonals, cant generalise to larger grids unlike get row and column, REFACTOR LATER
 
-
         if(diagNumber === 0){
 
             return [arr[0][0],arr[1][1],arr[2][2]];
@@ -217,17 +227,15 @@ var boardModule = (function() { //Module holding the board and methods around bo
 }());
 
 
-
 var gameModule = (function() { //should control the flow of game and reflect that in the DOM
 
     let body = document.querySelector("body");
+    let currentBoardState;
 
     let _playerOne = Player('X');
     let _playerTwo = Player('O');
     let _currentPlayer;//default start
 
-    let currentBoardState;
-    
     const _changePlayer = function() {
 
         if(_currentPlayer == _playerOne){
@@ -257,7 +265,7 @@ var gameModule = (function() { //should control the flow of game and reflect tha
         }else{
 
             return;
-            
+
         }
     
     }
@@ -266,14 +274,12 @@ var gameModule = (function() { //should control the flow of game and reflect tha
 
         let parent = document.querySelector("body");
         let winner = document.createElement("p");
+
         winner.id = "winner-text"
-
         winner.classList.add(".game-winner");
-
         winner.textContent = `player ${player.getSymbol()} has WON!`;
 
         parent.appendChild(winner);
-
 
     }
 
@@ -291,11 +297,12 @@ var gameModule = (function() { //should control the flow of game and reflect tha
                 displayWinner(_currentPlayer);
 
             }
+
             _changePlayer();
+
         }
 
     }
-
 
     const resetGame = function(e){
 
@@ -304,7 +311,6 @@ var gameModule = (function() { //should control the flow of game and reflect tha
         startGame();
 
     }
-
 
     let resetButton = document.createElement("button");
     resetButton.textContent = "reset game";
@@ -317,20 +323,11 @@ var gameModule = (function() { //should control the flow of game and reflect tha
 
     body.appendChild(resetButton);
 
-
-    
-
-   
-
-    //NOT SURE WHAT BEST PRACTICE IS, just adding the event listener inside the grid module
-   
     return{startGame,playTurn};
 
 }());
 
-
-
-gameModule.startGame();
+gameModule.startGame(); //starts the game by round
 
 
 
