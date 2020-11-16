@@ -29,7 +29,7 @@ var boardModule = (function() { //Module holding the board and methods around bo
         for(let i=0;i<currentBoardState.length;i++){//creates a square and fills it with content from the current board state
             
             for(let j=0;j<currentBoardState[0].length;j++){
-                
+
                 square = document.createElement("div");
                 square.classList.add("square");
                 square.id = `${i},${j}`;
@@ -248,7 +248,17 @@ var gameModule = (function() { //should control the flow of game and reflect tha
 
     const removeWinnerText = function(){
 
-        document.getElementById("winner-text").remove();
+        let winnerText = document.getElementById("winner-text");
+
+        if(winnerText!=null){
+
+            winnerText.remove();
+            
+        }else{
+
+            return;
+            
+        }
     
     }
 
