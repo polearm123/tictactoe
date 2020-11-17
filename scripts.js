@@ -18,9 +18,86 @@ const Computer = (symbol) => { //makes moves according to minMax
 
     }
 
-    const makeMove = () => {
+    const minimax = function(currentBoard,maxPlayer){
 
-        console.log("not yet implemented");
+        //base case, checks if the current state being checked is a winning or losing move for the max player
+
+        if(boardModule.checkWinningMove() && maxPlayer){
+
+            return 1;
+
+        }else if(boardModule.checkWinningMove() && !maxPlayer){
+
+            return -1;
+
+        }else{
+
+            return 0;
+
+        }
+
+        if(maxPlayer){//go through each possible move from the current state and run the minimax on them aswell
+
+            var maxScore = -Infinity;
+            let tempBoard = currentBoard;
+            let maxEval;
+            let eval;
+
+            for(let i=0;i<currentBoard.length;i++){
+
+                for(let j=0;j<currentBoard[0].length;j++){
+
+                    if(currentBoarrd[i][j] == ""){ //this empty square represents a possible move
+
+                        tempBoard = currentBoard;
+                        tempBoard[i][j] = 'O';
+                        eval = minimax(tempBoard,false);
+                        maxEval = Math.max(eval,maxEval);
+                        
+                    }
+
+                }
+
+            }
+
+            return maxEval;
+
+        }
+
+
+        if(!maxPlayer){
+
+            var minScore = Infinity;
+            let tempBoard = currentBoard;
+            let minEval;
+            let eval;
+
+            for(let i=0;i<currentBoard.length;i++){
+
+                for(let j=0;j<currentBoard[0].length;j++){
+
+                    if(currentBoarrd[i][j] == ""){ //this empty square represents a possible move
+
+                        tempBoard = currentBoard;
+                        tempBoard[i][j] = 'X';
+                        eval = minimax(tempBoard,false);
+                        minEval = Math.min(eval,minEval);
+                        
+                    }
+
+                }
+
+            }
+
+            return minEval;
+
+        }
+
+    }
+
+    const makeMove = (currentBoard) => {
+
+        console.log(minimax(currentBoard,true));
 
     }
 
@@ -57,6 +134,7 @@ var boardModule = (function() { //Module holding the board and methods around bo
         }
 
         let squares = document.querySelectorAll(".square"); //adds event listener after populating the game board
+
         squares.forEach(element => {
 
             element.addEventListener("click", function(e){
@@ -183,6 +261,28 @@ var boardModule = (function() { //Module holding the board and methods around bo
 
     }
 
+    const checkAllSpacesFilled = () => { //counts the number of X and 0, if it adds to 9 - meaning there have been 9 turns - a draw is printed
+
+        let turnCounter = 0;
+        console.log("inside");
+        for(let i=0;i<boardArray.length;i++){
+            for(let j=0;j<boardArray[0].length;j++){
+                console.log("inside the checkspaces board array it");
+                if(boardArray[i][j] == 'X' || boardArray[i][j] == 'O'){
+                    
+                    turnCounter++;
+                    console.log(turnCounter);
+
+                }
+
+            }
+
+        }
+
+        return (turnCounter==9) ? true:false;
+
+    }
+
     const checkWinningMove = () => { //processes the current state of the board, and determines if there has been a winning move or not
 
         let winningXArray = ['X','X','X'];
@@ -207,20 +307,29 @@ var boardModule = (function() { //Module holding the board and methods around bo
             
             if(matchingArrays(merged[i],winningXArray)){
                 
-                return true;
+                return 1;
 
             }else if(matchingArrays(merged[i],winningOArray)){
 
-                return true;
+                return 1;
 
             }else continue;
 
         }
 
-        return false; //no winning move has been found
+
+        if(checkAllSpacesFilled()){
+
+            console.log("all spaces have been filled");
+            return 0;
+
+        }
+
+        return -1; //no winning move has been found
 
     }
 
+ 
     return{addToBoard,getBoard,resetBoard,printBoardOnscreen,checkWinningMove};
 
 }());
@@ -233,6 +342,8 @@ var gameModule = (function() { //should control the flow of game and reflect tha
 
     let _playerOne = Player('X');
     let _playerTwo = Player('O');
+    let compPlayer = Computer('O');
+
     let _currentPlayer;//default start
 
     const _changePlayer = function() { //changes the current player
@@ -269,14 +380,23 @@ var gameModule = (function() { //should control the flow of game and reflect tha
     
     }
 
-    const displayWinner = function(player){ //displays the winner on winning move
+    const displayWinner = function(endGameResult,player){ //displays the winner on winning move
 
         let parent = document.querySelector("body");
         let winner = document.createElement("p");
 
         winner.id = "winner-text"
         winner.classList.add(".game-winner");
-        winner.textContent = `player ${player.getSymbol()} has WON!`;
+
+        if(endGameResult == 1){
+
+            winner.textContent = `player ${player} has WON!`;
+
+        }else if(endGameResult ==0){
+
+            winner.textContent = 'Game results in a draw!';
+
+        }
 
         parent.appendChild(winner);
 
@@ -291,11 +411,23 @@ var gameModule = (function() { //should control the flow of game and reflect tha
 
             boardModule.printBoardOnscreen();
 
-            if(boardModule.checkWinningMove()){//checks if the most recent move is a winning one, if so display winner if not change player and continue
+            if(boardModule.checkWinningMove() == 1){//checks if the most recent move is a winning one or draw, if so display winner if not change player and continue
 
-                displayWinner(_currentPlayer);
+                displayWinner(1,_currentPlayer.getSymbol());
+                setTimeout(resetGame,2000); //resets the game after winning
 
             }
+
+            if(boardModule.checkWinningMove() == 0){
+
+                displayWinner(0,_currentPlayer.getSymbol());
+                setTimeout(resetGame,2000);
+
+
+            }
+
+            // compPlayer.makeMove(boardModule.getBoard);
+
 
             _changePlayer();
 
