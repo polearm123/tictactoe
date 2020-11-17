@@ -37,7 +37,7 @@ var boardModule = (function() { //Module holding the board and methods around bo
 
     const gameGrid = document.querySelector(".game-grid"); //selects the game grid container
     
-    const printBoardOnscreen = function(){ //adds the board to the DOM
+    const printBoardOnscreen = function(){ //adds the board to the DOM alongside the event listeners of the squares
 
         gameGrid.innerHTML = ""; //clear the inner HTML before generating the grid, if this is not done elements are appended and grid grows larger every move
         currentBoardState = boardModule.getBoard();
@@ -181,10 +181,9 @@ var boardModule = (function() { //Module holding the board and methods around bo
 
         }
 
-
     }
 
-    const checkWinningMove = () => {
+    const checkWinningMove = () => { //processes the current state of the board, and determines if there has been a winning move or not
 
         let winningXArray = ['X','X','X'];
         let winningOArray = ['O','O','O'];
@@ -236,7 +235,7 @@ var gameModule = (function() { //should control the flow of game and reflect tha
     let _playerTwo = Player('O');
     let _currentPlayer;//default start
 
-    const _changePlayer = function() {
+    const _changePlayer = function() { //changes the current player
 
         if(_currentPlayer == _playerOne){
             _currentPlayer = _playerTwo;
@@ -246,7 +245,7 @@ var gameModule = (function() { //should control the flow of game and reflect tha
 
     }
 
-    const startGame = function(){
+    const startGame = function(){ //starts a game by setting player, resetting board of all moves and printing the board on screen
 
         _currentPlayer = _playerOne;
         boardModule.resetBoard();
@@ -254,7 +253,7 @@ var gameModule = (function() { //should control the flow of game and reflect tha
 
     }
 
-    const removeWinnerText = function(){
+    const removeWinnerText = function(){ //removes the winner text, used when resetting the board and visual
 
         let winnerText = document.getElementById("winner-text");
 
@@ -270,7 +269,7 @@ var gameModule = (function() { //should control the flow of game and reflect tha
     
     }
 
-    const displayWinner = function(player){
+    const displayWinner = function(player){ //displays the winner on winning move
 
         let parent = document.querySelector("body");
         let winner = document.createElement("p");
@@ -288,11 +287,11 @@ var gameModule = (function() { //should control the flow of game and reflect tha
         var coordinates = event.target.id;
         coordinates = coordinates.split(",");
 
-        if(boardModule.addToBoard(coordinates,_currentPlayer.getSymbol())){
+        if(boardModule.addToBoard(coordinates,_currentPlayer.getSymbol())){ //add coordinate of player click to board x or y
 
             boardModule.printBoardOnscreen();
 
-            if(boardModule.checkWinningMove()){
+            if(boardModule.checkWinningMove()){//checks if the most recent move is a winning one, if so display winner if not change player and continue
 
                 displayWinner(_currentPlayer);
 
@@ -304,7 +303,7 @@ var gameModule = (function() { //should control the flow of game and reflect tha
 
     }
 
-    const resetGame = function(e){
+    const resetGame = function(e){ //resets the board, removes the winner text if there was a winner and starts a new game
 
         boardModule.resetBoard();
         removeWinnerText();
@@ -315,7 +314,7 @@ var gameModule = (function() { //should control the flow of game and reflect tha
     let resetButton = document.createElement("button");
     resetButton.textContent = "reset game";
     
-    resetButton.addEventListener("click", function(e){
+    resetButton.addEventListener("click", function(e){ //resets the game on click of reset button
 
         resetGame(e);
 
